@@ -1,0 +1,26 @@
+{
+    "name": "maleficarum/rabbitmq",
+    "description": "Rabbitmq component",
+    "require": {
+        "php": ">=5.6",
+        "ext-json": "*",
+        "php-amqplib/php-amqplib": "2.6.3",
+        "maleficarum/ioc": "^1.0",
+        "maleficarum/config": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Maleficarum\\Rabbitmq\\": "src/Rabbitmq/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-ioc.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-config.git"
+        }
+    ]
+}
