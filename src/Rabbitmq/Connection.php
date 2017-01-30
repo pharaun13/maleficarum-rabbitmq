@@ -34,11 +34,11 @@ class Connection
     /**
      * Send a worker command to the broker.
      *
-     * @param \Maleficarum\Worker\Command\AbstractCommand $command
+     * @param \Maleficarum\Command\AbstractCommand $command
      *
      * @return \Maleficarum\Rabbitmq\Connection
      */
-    public function addCommand(\Maleficarum\Worker\Command\AbstractCommand $command) : \Maleficarum\Rabbitmq\Connection {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $command) : \Maleficarum\Rabbitmq\Connection {
         is_null($this->getConnection()) and $this->init();
 
         $message = $this->getMessage($command);
@@ -52,7 +52,7 @@ class Connection
     /**
      * Send a batch of worker commands (much better performance when sending multiple commands)
      *
-     * @param array|\Maleficarum\Worker\Command\AbstractCommand[] $commands
+     * @param array|\Maleficarum\Command\AbstractCommand[] $commands
      *
      * @return \Maleficarum\Rabbitmq\Connection
      * @throws \InvalidArgumentException
@@ -66,7 +66,7 @@ class Connection
         }
 
         foreach ($commands as $command) {
-            if (!$command instanceof \Maleficarum\Worker\Command\AbstractCommand) {
+            if (!$command instanceof \Maleficarum\Command\AbstractCommand) {
                 throw new \InvalidArgumentException(sprintf('Not a valid command. \%s::addCommands()', static::class));
             }
         }
@@ -121,11 +121,11 @@ class Connection
     /**
      * Get message
      *
-     * @param \Maleficarum\Worker\Command\AbstractCommand $command
+     * @param \Maleficarum\Command\AbstractCommand $command
      *
      * @return \PhpAmqpLib\Message\AMQPMessage
      */
-    private function getMessage(\Maleficarum\Worker\Command\AbstractCommand $command) : \PhpAmqpLib\Message\AMQPMessage {
+    private function getMessage(\Maleficarum\Command\AbstractCommand $command) : \PhpAmqpLib\Message\AMQPMessage {
         return \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
     }
     /* ------------------------------------ Connection methods END ------------------------------------- */
