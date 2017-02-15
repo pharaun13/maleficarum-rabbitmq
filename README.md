@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [3.0.1] - 2017-02-15
+### Added
+- Add tests
+
 ## [3.0.0] - 2017-01-30
 ### Changed
 - Changed namespace of command component

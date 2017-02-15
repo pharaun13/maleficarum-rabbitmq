@@ -1,5 +1,6 @@
 {
     "name": "maleficarum/rabbitmq",
+    "license": "proprietary",
     "description": "Rabbitmq component",
     "require": {
         "php": ">=7.0",
@@ -8,10 +9,18 @@
         "maleficarum/config": "^2.0",
         "maleficarum/command": "^1.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
     "autoload": {
         "psr-4": {
             "Maleficarum\\Rabbitmq\\": "src/Rabbitmq/"
         }
+    },
+    "autoload-dev": {
+        "files": [
+            "test/TestCase.php"
+        ]
     },
     "repositories": [
         {
