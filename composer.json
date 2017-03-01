@@ -6,7 +6,6 @@
         "php": ">=7.0",
         "php-amqplib/php-amqplib": "2.6.3",
         "maleficarum/ioc": "^2.0",
-        "maleficarum/config": "^2.0",
         "maleficarum/command": "^1.0"
     },
     "require-dev": {
@@ -26,10 +25,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:pharaun13/maleficarum-ioc.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:pharaun13/maleficarum-config.git"
         },
         {
             "type": "vcs",

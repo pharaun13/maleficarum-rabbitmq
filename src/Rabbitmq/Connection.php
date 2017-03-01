@@ -8,20 +8,29 @@ namespace Maleficarum\Rabbitmq;
 class Connection
 {
     /**
-     * Use \Maleficarum\Config\Dependant functionality.
-     *
-     * @trait
-     */
-    use \Maleficarum\Config\Dependant;
-
-    /**
      * Internal storage for a AMQP connection object.
      *
      * @var \PhpAmqpLib\Connection\AMQPStreamConnection|null
      */
     private $connection = null;
 
+    /**
+     * Internal storage for queue name
+     *
+     * @var string
+     */
+    private $queueName;
+
     /* ------------------------------------ Magic methods START ---------------------------------------- */
+    /**
+     * Connection constructor.
+     *
+     * @param string $queueName
+     */
+    public function __construct(string $queueName) {
+        $this->queueName = $queueName;
+    }
+
     /**
      * Perform connection cleanup.
      */
@@ -43,7 +52,7 @@ class Connection
 
         $message = $this->getMessage($command);
         $channel = $this->getChannel();
-        $channel->basic_publish($message, '', $this->getConfig()['queue']['commands']['queue-name']);
+        $channel->basic_publish($message, '', $this->queueName);
         $channel->close();
 
         return $this;
@@ -75,7 +84,7 @@ class Connection
         $channel = $this->getChannel();
         foreach ($commands as $command) {
             $message = $this->getMessage($command);
-            $channel->batch_basic_publish($message, '', $this->getConfig()['queue']['commands']['queue-name']);
+            $channel->batch_basic_publish($message, '', $this->queueName);
         }
 
         $channel->publish_batch();
