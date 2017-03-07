@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [4.1.0] - 2017-03-07
+### Added
+- Add method for raw message push
+
 ## [4.0.0] - 2017-03-01
 ### Changed
 - Remove config component

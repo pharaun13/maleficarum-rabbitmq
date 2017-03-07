@@ -94,6 +94,23 @@ class Connection
     }
 
     /**
+     * Add raw message to the queue
+     *
+     * @param string $message
+     *
+     * @return \Maleficarum\Rabbitmq\Connection
+     */
+    public function addRawMessage(string $message) : \Maleficarum\Rabbitmq\Connection {
+        is_null($this->getConnection()) and $this->init();
+
+        $channel = $this->getChannel();
+        $channel->basic_publish($message, '', $this->queueName);
+        $channel->close();
+
+        return $this;
+    }
+
+    /**
      * Initialize this object.
      *
      * @return \Maleficarum\Rabbitmq\Connection
