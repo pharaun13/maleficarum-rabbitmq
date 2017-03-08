@@ -1,7 +1,7 @@
 <?php
 
-\Maleficarum\Ioc\Container::register('PhpAmqpLib\Connection\AMQPConnection', function () {
-    $connection = $this->getMockBuilder('PhpAmqpLib\Connection\AMQPConnection')->disableOriginalConstructor();
+\Maleficarum\Ioc\Container::register('PhpAmqpLib\Connection\AMQPStreamConnection', function () {
+    $connection = $this->getMockBuilder('PhpAmqpLib\Connection\AMQPStreamConnection')->disableOriginalConstructor();
 
     // testAddCommand
     if ($this->getContext() === 'testAddCommand') {

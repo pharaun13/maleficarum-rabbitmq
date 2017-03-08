@@ -152,7 +152,7 @@ class Connection
      * @return \Maleficarum\Rabbitmq\Connection
      */
     public function init() : \Maleficarum\Rabbitmq\Connection {
-        $connection = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Connection\AMQPConnection', [$this->host, $this->port, $this->username, $this->password]);
+        $connection = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Connection\AMQPStreamConnection', [$this->host, $this->port, $this->username, $this->password]);
         $this->setConnection($connection);
 
         return $this;

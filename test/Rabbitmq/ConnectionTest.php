@@ -50,7 +50,7 @@ class ConnectionTest extends \Maleficarum\Tests\TestCase
 
         $method = new \ReflectionMethod($connection, 'getConnection');
         $method->setAccessible(true);
-        $this->assertInstanceOf('PhpAmqpLib\Connection\AMQPConnection', $method->invoke($connection));
+        $this->assertInstanceOf('PhpAmqpLib\Connection\AMQPStreamConnection', $method->invoke($connection));
         $method->setAccessible(false);
     }
     /* ------------------------------------ Method: init END ------------------------------------------- */

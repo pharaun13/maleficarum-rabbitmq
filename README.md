@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [5.0.1] - 2017-03-08
+### Fixed
+- Replace deprecated AMQPConnection with AMQPStreamConnection
+
 ## [5.0.0] - 2017-03-08
 ### Added
 - Add connection parameters to constructor
