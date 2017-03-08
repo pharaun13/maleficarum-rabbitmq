@@ -139,6 +139,7 @@ class Connection
     public function addRawMessage(string $message) : \Maleficarum\Rabbitmq\Connection {
         is_null($this->getConnection()) and $this->init();
 
+        $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$message, ['delivery_mode' => 2]]);
         $channel = $this->getChannel();
         $channel->basic_publish($message, '', $this->queueName);
         $channel->close();

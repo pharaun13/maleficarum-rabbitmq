@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [5.0.2] - 2017-03-08
+### Fixed
+- Fix addRawMessage method by passing AMQPMessage object instead of string
+
 ## [5.0.1] - 2017-03-08
 ### Fixed
 - Replace deprecated AMQPConnection with AMQPStreamConnection
