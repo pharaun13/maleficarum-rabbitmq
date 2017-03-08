@@ -13,7 +13,7 @@ class ConnectionTest extends \Maleficarum\Tests\TestCase
     public function testAddCommand() {
         $command = $this->createMock('Maleficarum\Command\AbstractCommand');
 
-        $connection = new \Maleficarum\Rabbitmq\Connection('foo');
+        $connection = new \Maleficarum\Rabbitmq\Connection('foo', 'bar', 0, 'baz', 'qux');
         $connection->addCommand($command);
     }
     /* ------------------------------------ Method: addCommand END ------------------------------------- */
@@ -23,7 +23,7 @@ class ConnectionTest extends \Maleficarum\Tests\TestCase
      * @expectedException \InvalidArgumentException
      */
     public function testAddCommandsEmpty() {
-        $connection = new \Maleficarum\Rabbitmq\Connection('foo');
+        $connection = new \Maleficarum\Rabbitmq\Connection('foo', 'bar', 0, 'baz', 'qux');
         $connection->addCommands([]);
     }
 
@@ -31,12 +31,12 @@ class ConnectionTest extends \Maleficarum\Tests\TestCase
      * @expectedException \InvalidArgumentException
      */
     public function testAddCommandsIncorrect() {
-        $connection = new \Maleficarum\Rabbitmq\Connection('foo');
+        $connection = new \Maleficarum\Rabbitmq\Connection('foo', 'bar', 0, 'baz', 'qux');
         $connection->addCommands([null, null]);
     }
 
     public function testAddCommandsCorrect() {
-        $connection = new \Maleficarum\Rabbitmq\Connection('foo');
+        $connection = new \Maleficarum\Rabbitmq\Connection('foo', 'bar', 0, 'baz', 'qux');
         $connection->addCommands([
             $this->createMock('Maleficarum\Command\AbstractCommand'),
             $this->createMock('Maleficarum\Command\AbstractCommand')
@@ -46,7 +46,7 @@ class ConnectionTest extends \Maleficarum\Tests\TestCase
 
     /* ------------------------------------ Method: init START ----------------------------------------- */
     public function testInit() {
-        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection', ['foo'])->init();
+        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection', ['foo', 'bar', 0, 'baz', 'qux'])->init();
 
         $method = new \ReflectionMethod($connection, 'getConnection');
         $method->setAccessible(true);
@@ -57,7 +57,7 @@ class ConnectionTest extends \Maleficarum\Tests\TestCase
 
     /* ------------------------------------ Method: __destruct START ----------------------------------- */
     public function testDestruct() {
-        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection', ['foo'])->init();
+        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection', ['foo', 'bar', 0, 'baz', 'qux'])->init();
         unset($connection);
     }
     /* ------------------------------------ Method: __destruct END ------------------------------------- */

@@ -21,14 +21,50 @@ class Connection
      */
     private $queueName;
 
+    /**
+     * Internal storage for host
+     *
+     * @var string
+     */
+    private $host;
+
+    /**
+     * Internal storage for port
+     *
+     * @var int
+     */
+    private $port;
+
+    /**
+     * Internal storage for username
+     *
+     * @var string
+     */
+    private $username;
+
+    /**
+     * Internal storage for password
+     *
+     * @var string
+     */
+    private $password;
+
     /* ------------------------------------ Magic methods START ---------------------------------------- */
     /**
      * Connection constructor.
      *
      * @param string $queueName
+     * @param string $host
+     * @param int $port
+     * @param string $username
+     * @param string $password
      */
-    public function __construct(string $queueName) {
+    public function __construct(string $queueName, string $host, int $port, string $username, string $password) {
         $this->queueName = $queueName;
+        $this->host = $host;
+        $this->port = $port;
+        $this->username = $username;
+        $this->password = $password;
     }
 
     /**
@@ -116,7 +152,7 @@ class Connection
      * @return \Maleficarum\Rabbitmq\Connection
      */
     public function init() : \Maleficarum\Rabbitmq\Connection {
-        $connection = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Connection\AMQPConnection');
+        $connection = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Connection\AMQPConnection', [$this->host, $this->port, $this->username, $this->password]);
         $this->setConnection($connection);
 
         return $this;

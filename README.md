@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [5.0.0] - 2017-03-08
+### Added
+- Add connection parameters to constructor
+- Fix tests
+
 ## [4.1.0] - 2017-03-07
 ### Added
 - Add method for raw message push
