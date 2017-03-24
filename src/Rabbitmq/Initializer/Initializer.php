@@ -32,7 +32,7 @@ class Initializer {
 			});
 
 			\Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Connection', function ($dep) {
-				return (new \Maleficarum\Rabbitmq\Connection())
+				return (new \Maleficarum\Rabbitmq\Connection\Connection())
 					->setConfig($dep['Maleficarum\Config']);
 			});
 		}
