@@ -19,7 +19,7 @@ class Initializer {
 		$builders = $opts['builders'] ?? [];
 		is_array($builders) or $builders = [];
 		if (!isset($builders['queue']['skip'])) {
-			\Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Connection', function ($dep, $opt) {
+			\Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Connection\Connection', function ($dep, $opt) {
 				if (isset($opt['useConfig'])) {
 					if (!array_key_exists('Maleficarum\Config', $dep) || !isset($dep['Maleficarum\Config']['queue'])) {
 						throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - no queue config found. \Maleficarum\Ioc\Container::get()');
