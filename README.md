@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [6.0.0] - 2017-03-24
+### Changed
+- Changed internal structure.
+- Added default package initializer.
+
 ## [5.0.2] - 2017-03-08
 ### Fixed
 - Fix addRawMessage method by passing AMQPMessage object instead of string

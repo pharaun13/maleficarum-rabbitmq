@@ -2,11 +2,14 @@
 /**
  * This class represents a connection to a RabbitMQ broker.
  */
+declare (strict_types=1);
 
-namespace Maleficarum\Rabbitmq;
+namespace Maleficarum\Rabbitmq\Connection;
 
-class Connection
-{
+class Connection {
+    
+    /* ------------------------------------ Class Property START --------------------------------------- */
+    
     /**
      * Internal storage for a AMQP connection object.
      *
@@ -49,6 +52,8 @@ class Connection
      */
     private $password;
 
+    /* ------------------------------------ Class Property END ----------------------------------------- */
+
     /* ------------------------------------ Magic methods START ---------------------------------------- */
     /**
      * Connection constructor.
@@ -75,15 +80,15 @@ class Connection
     }
     /* ------------------------------------ Magic methods END ------------------------------------------ */
 
-    /* ------------------------------------ Connection methods START ----------------------------------- */
+    /* ------------------------------------ Class Methods START ---------------------------------------- */
+    
     /**
      * Send a worker command to the broker.
      *
      * @param \Maleficarum\Command\AbstractCommand $command
-     *
-     * @return \Maleficarum\Rabbitmq\Connection
+     * @return \Maleficarum\Rabbitmq\Connection\Connection
      */
-    public function addCommand(\Maleficarum\Command\AbstractCommand $command) : \Maleficarum\Rabbitmq\Connection {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $command) : \Maleficarum\Rabbitmq\Connection\Connection {
         is_null($this->getConnection()) and $this->init();
 
         $message = $this->getMessage($command);
@@ -98,11 +103,10 @@ class Connection
      * Send a batch of worker commands (much better performance when sending multiple commands)
      *
      * @param array|\Maleficarum\Command\AbstractCommand[] $commands
-     *
-     * @return \Maleficarum\Rabbitmq\Connection
+     * @return \Maleficarum\Rabbitmq\Connection\Connection
      * @throws \InvalidArgumentException
      */
-    public function addCommands(array $commands) : \Maleficarum\Rabbitmq\Connection {
+    public function addCommands(array $commands) : \Maleficarum\Rabbitmq\Connection\Connection {
         is_null($this->getConnection()) and $this->init();
 
         // validate commands
@@ -133,10 +137,9 @@ class Connection
      * Add raw message to the queue
      *
      * @param string $message
-     *
-     * @return \Maleficarum\Rabbitmq\Connection
+     * @return \Maleficarum\Rabbitmq\Connection\Connection
      */
-    public function addRawMessage(string $message) : \Maleficarum\Rabbitmq\Connection {
+    public function addRawMessage(string $message) : \Maleficarum\Rabbitmq\Connection\Connection {
         is_null($this->getConnection()) and $this->init();
 
         $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$message, ['delivery_mode' => 2]]);
@@ -150,9 +153,9 @@ class Connection
     /**
      * Initialize this object.
      *
-     * @return \Maleficarum\Rabbitmq\Connection
+     * @return \Maleficarum\Rabbitmq\Connection\Connection
      */
-    public function init() : \Maleficarum\Rabbitmq\Connection {
+    public function init() : \Maleficarum\Rabbitmq\Connection\Connection {
         $connection = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Connection\AMQPStreamConnection', [$this->host, $this->port, $this->username, $this->password]);
         $this->setConnection($connection);
 
@@ -162,9 +165,9 @@ class Connection
     /**
      * Close connection and channel.
      *
-     * @return \Maleficarum\Rabbitmq\Connection
+     * @return \Maleficarum\Rabbitmq\Connection\Connection
      */
-    public function close() : \Maleficarum\Rabbitmq\Connection {
+    public function close() : \Maleficarum\Rabbitmq\Connection\Connection {
         $this->getConnection() and $this->getConnection()->close();
 
         return $this;
@@ -173,8 +176,7 @@ class Connection
     /**
      * Fetch the communications channel. This will be useful when executing chitinous command fetching in worker scripts.
      *
-     * @param string|null $id
-     *
+     * @param string $id
      * @return \PhpAmqpLib\Channel\AMQPChannel
      */
     public function getChannel(string $id = null) : \PhpAmqpLib\Channel\AMQPChannel {
@@ -185,15 +187,16 @@ class Connection
      * Get message
      *
      * @param \Maleficarum\Command\AbstractCommand $command
-     *
      * @return \PhpAmqpLib\Message\AMQPMessage
      */
     private function getMessage(\Maleficarum\Command\AbstractCommand $command) : \PhpAmqpLib\Message\AMQPMessage {
         return \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
     }
-    /* ------------------------------------ Connection methods END ------------------------------------- */
+    
+    /* ------------------------------------ Class Methods END ------------------------------------------ */
 
     /* ------------------------------------ Setters & Getters START ------------------------------------ */
+    
     /**
      * Set current AMQP queue connection.
      *
@@ -201,7 +204,7 @@ class Connection
      *
      * @return \Maleficarum\Rabbitmq\Connection
      */
-    public function setConnection(\PhpAmqpLib\Connection\AMQPStreamConnection $connection) : \Maleficarum\Rabbitmq\Connection {
+    public function setConnection(\PhpAmqpLib\Connection\AMQPStreamConnection $connection) : \Maleficarum\Rabbitmq\Connection\Connection {
         $this->connection = $connection;
 
         return $this;
@@ -215,5 +218,7 @@ class Connection
     private function getConnection() {
         return $this->connection;
     }
+    
     /* ------------------------------------ Setters & Getters END -------------------------------------- */
+    
 }
