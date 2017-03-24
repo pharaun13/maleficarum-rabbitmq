@@ -48,7 +48,7 @@ class Initializer {
 			});
 		}
 
-		\Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandQueue', \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection', ['useConfig' => true]));
+		\Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandQueue', \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['useConfig' => true]));
 
 		// return initializer name
 		return __METHOD__;
