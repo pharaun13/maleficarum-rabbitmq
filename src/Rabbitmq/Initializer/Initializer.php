@@ -26,7 +26,7 @@ class Initializer {
 					}
 
 					$host = $dep['Maleficarum\Config']['queue']['broker']['host'];
-					$port = $dep['Maleficarum\Config']['queue']['broker']['port'];
+					$port = (int)$dep['Maleficarum\Config']['queue']['broker']['port'];
 					$username = $dep['Maleficarum\Config']['queue']['broker']['username'];
 					$password = $dep['Maleficarum\Config']['queue']['broker']['password'];
 					$queueName = $dep['Maleficarum\Config']['queue']['commands']['queue-name'];
