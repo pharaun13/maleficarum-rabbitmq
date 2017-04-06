@@ -1,6 +1,14 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [6.0.2] - 2017-04-06
+### Fixed
+- Cast port to integer
+
+## [6.0.1] - 2017-04-06
+### Fixed
+- Move delcare before namespace delcaration
+
 ## [6.0.0] - 2017-03-24
 ### Changed
 - Changed internal structure.
