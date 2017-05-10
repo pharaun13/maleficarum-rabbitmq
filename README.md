@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [6.0.3] - 2017-05-10
+### Fixed
+- Cast port to integer
+
 ## [6.0.2] - 2017-04-06
 ### Fixed
 - Cast port to integer
