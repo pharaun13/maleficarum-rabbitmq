@@ -38,7 +38,7 @@ class Initializer {
 					if (!isset($opt['queue-name']) || !mb_strlen($opt['queue-name'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - queue-name not specified. \Maleficarum\Ioc\Container::get()');
 
 					$host = $opt['host'];
-					$port = $opt['port'];
+					$port = (int)$opt['port'];
 					$username = $opt['username'];
 					$password = $opt['password'];
 					$queueName = $opt['queue-name'];
