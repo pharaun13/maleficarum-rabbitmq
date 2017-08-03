@@ -3,10 +3,10 @@
     "license": "proprietary",
     "description": "Rabbitmq component",
     "require": {
-        "php": ">=7.0",
+        "php": "^7.1",
         "php-amqplib/php-amqplib": "2.6.3",
         "maleficarum/ioc": "^2.0",
-        "maleficarum/command": "^1.0"
+        "maleficarum/command": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0"

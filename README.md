@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [7.0.0] - 2017-08-03
+### Changed
+- Make use of nullable types provided in PHP 7.1 (http://php.net/manual/en/migration71.new-features.php)
+- Fix tests
+
 ## [6.0.3] - 2017-05-10
 ### Fixed
 - Cast port to integer
