@@ -16,51 +16,69 @@ class Initializer {
      *
      * @return string
      */
-    static public function initialize(array $opts = []): string {
+    static public function initialize(array $opts = []) : string {
         // load default builder if skip not requested
         $builders = $opts['builders'] ?? [];
         is_array($builders) or $builders = [];
         if (!isset($builders['queue']['skip'])) {
             \Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Connection\Connection', function ($dep, $opt) {
-                if (isset($opt['useConfig'])) {
-                    if (!array_key_exists('Maleficarum\Config', $dep) || !isset($dep['Maleficarum\Config']['queue'])) {
-                        throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - no queue config found. \Maleficarum\Ioc\Container::get()');
-                    }
+                if (!isset($opt['host']) || !mb_strlen($opt['host'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - host not specified. \Maleficarum\Ioc\Container::get()');
+                if (!isset($opt['port']) || !mb_strlen($opt['port'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - port not specified. \Maleficarum\Ioc\Container::get()');
+                if (!isset($opt['username']) || !mb_strlen($opt['username'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - username not specified. \Maleficarum\Ioc\Container::get()');
+                if (!isset($opt['password']) || !mb_strlen($opt['password'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - password not specified. \Maleficarum\Ioc\Container::get()');
+                if (!isset($opt['queue-name']) || !mb_strlen($opt['queue-name'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - queue-name not specified. \Maleficarum\Ioc\Container::get()');
 
-                    $host = $dep['Maleficarum\Config']['queue']['broker']['host'];
-                    $port = (int)$dep['Maleficarum\Config']['queue']['broker']['port'];
-                    $username = $dep['Maleficarum\Config']['queue']['broker']['username'];
-                    $password = $dep['Maleficarum\Config']['queue']['broker']['password'];
-                    $queueName = $dep['Maleficarum\Config']['queue']['commands']['queue-name'];
-                } else {
-                    if (!isset($opt['host']) || !mb_strlen($opt['host'])) {
-                        throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - host not specified. \Maleficarum\Ioc\Container::get()');
+                return new \Maleficarum\Rabbitmq\Connection\Connection($opt['queue-name'], $opt['host'], (int)$opt['port'], $opt['username'], $opt['password']);
+            });
+            
+            \Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Manager\Manager', function ($dep, $opt) {
+                $manager = new \Maleficarum\Rabbitmq\Manager\Manager();
+                if (array_key_exists('Maleficarum\Config', $dep) && isset($dep['Maleficarum\Config']['rabbitmq'])) {
+                    $config = $dep['Maleficarum\Config']['rabbitmq'];
+                    
+                    // add persistent connections
+                    if (isset($config['persistent']) && is_array($config['persistent'])) {
+                        foreach($config['persistent'] as $con_name) {
+                            $params = [
+                                'host' => $config['broker_'.$con_name]['host'],
+                                'port' => (int)$config['broker_'.$con_name]['port'],
+                                'username' => $config['broker_'.$con_name]['username'],
+                                'password' => $config['broker_'.$con_name]['password'],
+                                'queue-name' => $config['broker_'.$con_name]['queue']
+                            ];
+                            $manager->addConnection(
+                                \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', $params), 
+                                $con_name,
+                                \Maleficarum\Rabbitmq\Manager\Manager::CON_MODE_PERSISTENT,
+                                (int)$config['broker_'.$con_name]['priority']
+                            );
+                        }
                     }
-                    if (!isset($opt['port']) || !mb_strlen($opt['port'])) {
-                        throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - port not specified. \Maleficarum\Ioc\Container::get()');
+                    
+                    // add transient connections
+                    if (isset($config['transient']) && is_array($config['transient'])) {
+                        foreach($config['transient'] as $con_name) {
+                            $params = [
+                                'host' => $config['broker_'.$con_name]['host'],
+                                'port' => (int)$config['broker_'.$con_name]['port'],
+                                'username' => $config['broker_'.$con_name]['username'],
+                                'password' => $config['broker_'.$con_name]['password'],
+                                'queue-name' => $config['broker_'.$con_name]['queue']
+                            ];
+                            $manager->addConnection(
+                                \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', $params),
+                                $con_name,
+                                \Maleficarum\Rabbitmq\Manager\Manager::CON_MODE_TRANSIENT,
+                                (int)$config['broker_'.$con_name]['priority']
+                            );
+                        }
                     }
-                    if (!isset($opt['username']) || !mb_strlen($opt['username'])) {
-                        throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - username not specified. \Maleficarum\Ioc\Container::get()');
-                    }
-                    if (!isset($opt['password']) || !mb_strlen($opt['password'])) {
-                        throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - password not specified. \Maleficarum\Ioc\Container::get()');
-                    }
-                    if (!isset($opt['queue-name']) || !mb_strlen($opt['queue-name'])) {
-                        throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - queue-name not specified. \Maleficarum\Ioc\Container::get()');
-                    }
-
-                    $host = $opt['host'];
-                    $port = (int)$opt['port'];
-                    $username = $opt['username'];
-                    $password = $opt['password'];
-                    $queueName = $opt['queue-name'];
                 }
-
-                return new \Maleficarum\Rabbitmq\Connection\Connection($queueName, $host, $port, $username, $password);
+                
+                
+                return $manager;
             });
         }
-
-        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandQueue', \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['useConfig' => true]));
 
         // return initializer name
         return __METHOD__;

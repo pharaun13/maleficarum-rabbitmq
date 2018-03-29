@@ -1,6 +1,12 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [8.0.0] - 2018-03-21
+### Changed
+- Added a connection manager class - it should be used to access rabbit mq connections in a seemless way. Direct access to the connection is still available but should be avoided.
+- Added support for connection sources with defined priority.
+- Added support for transient connections - automatically closed after each use. Transient connections cannot be used as command sources.
+
 ## [7.0.0] - 2017-08-03
 ### Changed
 - Make use of nullable types provided in PHP 7.1 (http://php.net/manual/en/migration71.new-features.php)

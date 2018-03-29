@@ -10,9 +10,9 @@ trait Dependant {
     /* ------------------------------------ Class Property START --------------------------------------- */
 
     /**
-     * Internal storage for the rabbitmq connection object.
+     * Internal storage for the rabbitmq manager object.
      *
-     * @var \Maleficarum\Rabbitmq\Connection\Connection
+     * @var \Maleficarum\Rabbitmq\Manager\Manager
      */
     protected $rabbitmqStorage = null;
 
@@ -21,29 +21,28 @@ trait Dependant {
     /* ------------------------------------ Class Methods START ---------------------------------------- */
 
     /**
-     * Inject a new rabbitmq connection object.
+     * Inject a new rabbitmq manager object.
      *
-     * @param \Maleficarum\Rabbitmq\Connection\Connection $connection
-     *
+     * @param \Maleficarum\Rabbitmq\Manager\Manager $connection
      * @return \Maleficarum\Rabbitmq\Dependant
      */
-    public function setQueue(\Maleficarum\Rabbitmq\Connection\Connection $connection) {
-        $this->rabbitmqStorage = $connection;
+    public function setQueue(\Maleficarum\Rabbitmq\Manager\Manager $manager) {
+        $this->rabbitmqStorage = $manager;
 
         return $this;
     }
 
     /**
-     * Fetch the currently assigned rabbitmq connection object.
+     * Fetch the currently assigned rabbitmq manager object.
      *
      * @return \Maleficarum\Rabbitmq\Connection\Connection|null
      */
-    public function getQueue(): ?\Maleficarum\Rabbitmq\Connection\Connection {
+    public function getQueue() : ?\Maleficarum\Rabbitmq\Manager\Manager {
         return $this->rabbitmqStorage;
     }
 
     /**
-     * Detach the currently assigned rabbitmq connection object.
+     * Detach the currently assigned rabbitmq manager object.
      *
      * @return \Maleficarum\Rabbitmq\Dependant
      */
