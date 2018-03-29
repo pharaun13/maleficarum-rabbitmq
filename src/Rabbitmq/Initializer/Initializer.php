@@ -23,7 +23,7 @@ class Initializer {
         if (!isset($builders['queue']['skip'])) {
             \Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Connection\Connection', function ($dep, $opt) {
                 if (!isset($opt['host']) || !mb_strlen($opt['host'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - host not specified. \Maleficarum\Ioc\Container::get()');
-                if (!isset($opt['port']) || !mb_strlen($opt['port'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - port not specified. \Maleficarum\Ioc\Container::get()');
+                if (!isset($opt['port']) || !is_int($opt['port'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - port not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['username']) || !mb_strlen($opt['username'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - username not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['password']) || !mb_strlen($opt['password'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - password not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['queue-name']) || !mb_strlen($opt['queue-name'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - queue-name not specified. \Maleficarum\Ioc\Container::get()');
@@ -80,6 +80,9 @@ class Initializer {
             });
         }
 
+        // add the rabbimq manager as a command route dependency
+        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandRouter', \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Manager\Manager'));
+        
         // return initializer name
         return __METHOD__;
     }

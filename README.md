@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [8.0.1] - 2018-03-29
+### Fixed
+- Incorrect validation for port value when building a new connection object.
+- Added a missing invocation that adds the manager object as a default Maleficarum command router in the default initializer logic. 
+
 ## [8.0.0] - 2018-03-29
 ### Changed
 - Added a connection manager class - it should be used to access rabbit mq connections in a seemless way. Direct access to the connection is still available but should be avoided.
