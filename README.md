@@ -1,7 +1,7 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
-## [8.0.0] - 2018-03-21
+## [8.0.0] - 2018-03-29
 ### Changed
 - Added a connection manager class - it should be used to access rabbit mq connections in a seemless way. Direct access to the connection is still available but should be avoided.
 - Added support for connection sources with defined priority.
