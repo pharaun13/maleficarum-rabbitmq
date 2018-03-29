@@ -35,7 +35,7 @@ trait Dependant {
     /**
      * Fetch the currently assigned rabbitmq manager object.
      *
-     * @return \Maleficarum\Rabbitmq\Connection\Connection|null
+     * @return \Maleficarum\Rabbitmq\Manager\Manager|null
      */
     public function getQueue() : ?\Maleficarum\Rabbitmq\Manager\Manager {
         return $this->rabbitmqStorage;
