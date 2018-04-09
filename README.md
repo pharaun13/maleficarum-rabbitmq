@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [8.1.0] - 2018-04-09
+### Added
+- Added the possibility to define connection vhost setting via the connection constructor.
+
 ## [8.0.1] - 2018-03-29
 ### Fixed
 - Incorrect validation for port value when building a new connection object.

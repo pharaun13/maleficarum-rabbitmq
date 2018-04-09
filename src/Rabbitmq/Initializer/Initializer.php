@@ -22,13 +22,17 @@ class Initializer {
         is_array($builders) or $builders = [];
         if (!isset($builders['queue']['skip'])) {
             \Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Connection\Connection', function ($dep, $opt) {
+                // required params
                 if (!isset($opt['host']) || !mb_strlen($opt['host'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - host not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['port']) || !is_int($opt['port'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - port not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['username']) || !mb_strlen($opt['username'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - username not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['password']) || !mb_strlen($opt['password'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - password not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['queue-name']) || !mb_strlen($opt['queue-name'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - queue-name not specified. \Maleficarum\Ioc\Container::get()');
 
-                return new \Maleficarum\Rabbitmq\Connection\Connection($opt['queue-name'], $opt['host'], (int)$opt['port'], $opt['username'], $opt['password']);
+                // optional params
+                $vhost = (isset($opt['vhost']) && mb_strlen($opt['vhost'])) ? $opt['vhost'] : '/'; 
+                
+                return new \Maleficarum\Rabbitmq\Connection\Connection($opt['queue-name'], $opt['host'], (int)$opt['port'], $opt['username'], $opt['password'], $vhost);
             });
             
             \Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Manager\Manager', function ($dep, $opt) {
@@ -46,6 +50,10 @@ class Initializer {
                                 'password' => $config['broker_'.$con_name]['password'],
                                 'queue-name' => $config['broker_'.$con_name]['queue']
                             ];
+
+                            // vhost is optional
+                            isset($config['broker_'.$con_name]['vhost']) && mb_strlen($config['broker_'.$con_name]['vhost']) and $params['vhost'] = $config['broker_'.$con_name]['vhost'];
+                            
                             $manager->addConnection(
                                 \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', $params), 
                                 $con_name,
@@ -65,6 +73,10 @@ class Initializer {
                                 'password' => $config['broker_'.$con_name]['password'],
                                 'queue-name' => $config['broker_'.$con_name]['queue']
                             ];
+                            
+                            // vhost is optional
+                            isset($config['broker_'.$con_name]['vhost']) && mb_strlen($config['broker_'.$con_name]['vhost']) and $params['vhost'] = $config['broker_'.$con_name]['vhost'];
+                            
                             $manager->addConnection(
                                 \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', $params),
                                 $con_name,

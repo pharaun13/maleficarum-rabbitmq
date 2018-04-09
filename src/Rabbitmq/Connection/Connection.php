@@ -17,39 +17,46 @@ class Connection {
     private $connection = null;
 
     /**
-     * Internal storage for queue name
+     * Internal storage for queue name.
      *
      * @var string
      */
     private $queueName;
 
     /**
-     * Internal storage for host
+     * Internal storage for host.
      *
      * @var string
      */
     private $host;
 
     /**
-     * Internal storage for port
+     * Internal storage for port.
      *
      * @var int
      */
     private $port;
 
     /**
-     * Internal storage for username
+     * Internal storage for username.
      *
      * @var string
      */
     private $username;
 
     /**
-     * Internal storage for password
+     * Internal storage for password.
      *
      * @var string
      */
     private $password;
+
+    /**
+     * Internal storage for the vhost parameter.
+     * 
+     * @var string
+     */
+    private $vhost;
 
     /* ------------------------------------ Class Property END ----------------------------------------- */
 
@@ -62,13 +69,15 @@ class Connection {
      * @param int $port
      * @param string $username
      * @param string $password
+     * @param string $vhost
      */
-    public function __construct(string $queueName, string $host, int $port, string $username, string $password) {
+    public function __construct(string $queueName, string $host, int $port, string $username, string $password, string $vhost = '/') {
         $this->setQueueName($queueName);
         $this->host = $host;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
+        $this->vhost = $vhost;
     }
 
     /**
@@ -87,7 +96,10 @@ class Connection {
      * @return \Maleficarum\Rabbitmq\Connection\Connection
      */
     public function connect() : \Maleficarum\Rabbitmq\Connection\Connection {
-        is_null($this->getConnection()) || !$this->getConnection()->isConnected() and $this->setConnection(\Maleficarum\Ioc\Container::get('PhpAmqpLib\Connection\AMQPStreamConnection', [$this->host, $this->port, $this->username, $this->password]));
+        is_null($this->getConnection()) || !$this->getConnection()->isConnected() and $this->setConnection(\Maleficarum\Ioc\Container::get(
+            'PhpAmqpLib\Connection\AMQPStreamConnection', 
+            [$this->host, $this->port, $this->username, $this->password, $this->vhost]
+        ));
 
         return $this;
     }
