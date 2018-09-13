@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [9.0.0] - 2018-09-12
+### Changed
+- Updated component to work with Maleficarum\Ioc 3.X and Maleficarum\Command 3.X.
+- Bumped PHP version requirement to 7.2+.
+
 ## [8.1.0] - 2018-04-09
 ### Added
 - Added the possibility to define connection vhost setting via the connection constructor.

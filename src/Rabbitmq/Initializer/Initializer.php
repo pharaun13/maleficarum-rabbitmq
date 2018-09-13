@@ -21,7 +21,7 @@ class Initializer {
         $builders = $opts['builders'] ?? [];
         is_array($builders) or $builders = [];
         if (!isset($builders['queue']['skip'])) {
-            \Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Connection\Connection', function ($dep, $opt) {
+            \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Rabbitmq\Connection\Connection', function ($dep, $opt) {
                 // required params
                 if (!isset($opt['host']) || !mb_strlen($opt['host'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - host not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['port']) || !is_int($opt['port'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - port not specified. \Maleficarum\Ioc\Container::get()');
@@ -35,7 +35,7 @@ class Initializer {
                 return new \Maleficarum\Rabbitmq\Connection\Connection($opt['queue-name'], $opt['host'], (int)$opt['port'], $opt['username'], $opt['password'], $vhost);
             });
             
-            \Maleficarum\Ioc\Container::register('Maleficarum\Rabbitmq\Manager\Manager', function ($dep, $opt) {
+            \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Rabbitmq\Manager\Manager', function ($dep, $opt) {
                 $manager = new \Maleficarum\Rabbitmq\Manager\Manager();
                 if (array_key_exists('Maleficarum\Config', $dep) && isset($dep['Maleficarum\Config']['rabbitmq'])) {
                     $config = $dep['Maleficarum\Config']['rabbitmq'];
@@ -93,7 +93,7 @@ class Initializer {
         }
 
         // add the rabbimq manager as a command route dependency
-        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandRouter', \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Manager\Manager'));
+        \Maleficarum\Ioc\Container::registerShare('Maleficarum\CommandRouter', \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Manager\Manager'));
         
         // return initializer name
         return __METHOD__;

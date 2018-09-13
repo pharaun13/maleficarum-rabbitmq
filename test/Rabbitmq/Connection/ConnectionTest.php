@@ -7,57 +7,37 @@ declare(strict_types = 1);
 
 namespace Maleficarum\Rabbitmq\Tests\Connection;
 
-class ConnectionTest extends \Maleficarum\Tests\TestCase
-{
-    /* ------------------------------------ Method: addCommand START ----------------------------------- */
-    public function testAddCommand() {
-        $command = $this->createMock('Maleficarum\Command\AbstractCommand');
-
-        $connection = new \Maleficarum\Rabbitmq\Connection\Connection('foo', 'bar', 0, 'baz', 'qux');
-        $connection->addCommand($command);
+class ConnectionTest extends \Maleficarum\Tests\TestCase {
+    /* ------------------------------------ Method: connect START -------------------------------------- */
+    public function testConnectAfterItWasCalled() {
+        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['foo', 'bar', 0, 'baz', 'qux']);
+        $connection->connect();
+        
+        $this->assertInstanceOf('PhpAmqpLib\Connection\AMQPStreamConnection', $connection->getConnection());
     }
-    /* ------------------------------------ Method: addCommand END ------------------------------------- */
+    
+    public function testConnectBeforeItWasCalled() {
+        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['foo', 'bar', 0, 'baz', 'qux']);
 
-    /* ------------------------------------ Method: addCommands START ---------------------------------- */
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddCommandsEmpty() {
-        $connection = new \Maleficarum\Rabbitmq\Connection\Connection('foo', 'bar', 0, 'baz', 'qux');
-        $connection->addCommands([]);
+        $this->assertNull($connection->getConnection());
     }
+    /* ------------------------------------ Method: connect END ---------------------------------------- */
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddCommandsIncorrect() {
-        $connection = new \Maleficarum\Rabbitmq\Connection\Connection('foo', 'bar', 0, 'baz', 'qux');
-        $connection->addCommands([null, null]);
+    /* ------------------------------------ Method: getChannel START ----------------------------------- */
+    public function testGetChannelWithCorrectId() {
+        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['foo', 'bar', 0, 'baz', 'qux']);
+        $connection->connect();
+        
+        $this->assertInstanceOf('PhpAmqpLib\Channel\AMQPChannel', $connection->getChannel(1));
+        $this->assertSame(9999, $connection->getChannel(1)->getChannelId());
     }
-
-    public function testAddCommandsCorrect() {
-        $connection = new \Maleficarum\Rabbitmq\Connection\Connection('foo', 'bar', 0, 'baz', 'qux');
-        $connection->addCommands([
-            $this->createMock('Maleficarum\Command\AbstractCommand'),
-            $this->createMock('Maleficarum\Command\AbstractCommand')
-        ]);
-    }
-    /* ------------------------------------ Method: addCommands END ------------------------------------ */
-
-    /* ------------------------------------ Method: init START ----------------------------------------- */
-    public function testInit() {
-        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['foo', 'bar', 0, 'baz', 'qux'])->init();
-
-        $method = new \ReflectionMethod($connection, 'getConnection');
-        $method->setAccessible(true);
-        $this->assertInstanceOf('PhpAmqpLib\Connection\AMQPStreamConnection', $method->invoke($connection));
-        $method->setAccessible(false);
-    }
-    /* ------------------------------------ Method: init END ------------------------------------------- */
-
+    
+    /* ------------------------------------ Method: getChannel END ------------------------------------- */
+    
     /* ------------------------------------ Method: __destruct START ----------------------------------- */
     public function testDestruct() {
-        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['foo', 'bar', 0, 'baz', 'qux'])->init();
+        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['foo', 'bar', 0, 'baz', 'qux']);
+        $connection->connect();
         unset($connection);
     }
     /* ------------------------------------ Method: __destruct END ------------------------------------- */

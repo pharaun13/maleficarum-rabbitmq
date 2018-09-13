@@ -32,12 +32,12 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $namespaces->setValue([]);
         $namespaces->setAccessible(false);
 
-        $initializers = new \ReflectionProperty('Maleficarum\Ioc\Container', 'initializers');
+        $initializers = new \ReflectionProperty('Maleficarum\Ioc\Container', 'builders');
         $initializers->setAccessible(true);
         $initializers->setValue([]);
         $initializers->setAccessible(false);
 
-        $dependencies = new \ReflectionProperty('Maleficarum\Ioc\Container', 'dependencies');
+        $dependencies = new \ReflectionProperty('Maleficarum\Ioc\Container', 'shares');
         $dependencies->setAccessible(true);
         $dependencies->setValue([]);
         $dependencies->setAccessible(false);
