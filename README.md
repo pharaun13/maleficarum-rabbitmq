@@ -1,10 +1,20 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [9.1.0] - 2018-09-14
+### Changed
+- When attempting to create a connection there will be a double retry from now on. (Exactly 3 attempts will be made to establish the connection).
+- Increased connection timeout parameters from 3s to 10s.
+
 ## [9.0.0] - 2018-09-12
 ### Changed
 - Updated component to work with Maleficarum\Ioc 3.X and Maleficarum\Command 3.X.
 - Bumped PHP version requirement to 7.2+.
+
+## [8.2.0] - 2018-09-14
+### Changed
+- When attempting to create a connection there will be a double retry from now on. (Exactly 3 attempts will be made to establish the connection).
+- Increased connection timeout parameters from 3s to 10s.
 
 ## [8.1.0] - 2018-04-09
 ### Added
@@ -20,6 +30,11 @@ This is the Maleficarum RabbitMQ component implementation.
 - Added a connection manager class - it should be used to access rabbit mq connections in a seemless way. Direct access to the connection is still available but should be avoided.
 - Added support for connection sources with defined priority.
 - Added support for transient connections - automatically closed after each use. Transient connections cannot be used as command sources.
+
+## [7.1.0] - 2018-09-14
+### Changed
+- When attempting to create a connection there will be a double retry from now on. (Exactly 3 attempts will be made to establish the connection).
+- Increased connection timeout parameters from 3s to 10s.
 
 ## [7.0.0] - 2017-08-03
 ### Changed
