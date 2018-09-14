@@ -97,7 +97,8 @@ class Initializer {
                 // attempt to establish the connection - up to 3 times
                 while (is_null($connection) && $retry_count++ < 3) {
                     try {
-                        $connection = new \PhpAmqpLib\Connection\AMQPStreamConnection($opt[0], // host
+                        $connection = new \PhpAmqpLib\Connection\AMQPStreamConnection(
+                            $opt[0], // host
                             $opt[1], // port
                             $opt[2], // username
                             $opt[3], // password
