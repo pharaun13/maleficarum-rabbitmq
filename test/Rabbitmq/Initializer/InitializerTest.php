@@ -14,6 +14,7 @@ class InitializerTest extends \Maleficarum\Tests\TestCase {
 
         $this->assertTrue(\Maleficarum\Ioc\Container::isBuilderRegistered('Maleficarum\Rabbitmq\Connection\Connection'));
         $this->assertTrue(\Maleficarum\Ioc\Container::isBuilderRegistered('Maleficarum\Rabbitmq\Manager\Manager'));
+        $this->assertTrue(\Maleficarum\Ioc\Container::isBuilderRegistered('PhpAmqpLib\Connection\AMQPStreamConnection'));
         
         $this->assertInstanceOf('Maleficarum\Rabbitmq\Manager\Manager', \Maleficarum\Ioc\Container::retrieveShare('Maleficarum\CommandRouter'));
     }
@@ -23,6 +24,7 @@ class InitializerTest extends \Maleficarum\Tests\TestCase {
         
         $this->assertFalse(\Maleficarum\Ioc\Container::isBuilderRegistered('Maleficarum\Rabbitmq\Connection\Connection'));
         $this->assertFalse(\Maleficarum\Ioc\Container::isBuilderRegistered('Maleficarum\Rabbitmq\Manager\Manager'));
+        $this->assertFalse(\Maleficarum\Ioc\Container::isBuilderRegistered('PhpAmqpLib\Connection\AMQPStreamConnection'));
 
         $this->assertInstanceOf('Maleficarum\Rabbitmq\Manager\Manager', \Maleficarum\Ioc\Container::retrieveShare('Maleficarum\CommandRouter'));
     }

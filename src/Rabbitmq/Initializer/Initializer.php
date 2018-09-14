@@ -90,7 +90,7 @@ class Initializer {
                 return $manager;
             });
 
-            \Maleficarum\Ioc\Container::register('PhpAmqpLib\Connection\AMQPStreamConnection', function ($dep, $opt) {
+            \Maleficarum\Ioc\Container::registerBuilder('PhpAmqpLib\Connection\AMQPStreamConnection', function ($dep, $opt) {
                 $connection = null;
                 $retry_count = 0;
 
