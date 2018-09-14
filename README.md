@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [8.2.0] - 2018-09-14
+### Changed
+- When attempting to create a connection there will be a double retry from now on. (Exactly 3 attempts will be made to establish the connection).
+- Increased connection timeout parameters from 3s to 10s.
+
 ## [8.1.0] - 2018-04-09
 ### Added
 - Added the possibility to define connection vhost setting via the connection constructor.
