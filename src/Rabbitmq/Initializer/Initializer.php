@@ -58,6 +58,37 @@ class Initializer {
 
                 return new \Maleficarum\Rabbitmq\Connection\Connection($queueName, $host, $port, $username, $password);
             });
+
+            \Maleficarum\Ioc\Container::register('PhpAmqpLib\Connection\AMQPStreamConnection', function ($dep, $opt) {
+                $connection = null;
+                $retry_count = 0;
+
+                // attempt to establish the connection - up to 3 times
+                while (is_null($connection) && $retry_count++ < 3) {
+                    try {
+                        $connection = new \PhpAmqpLib\Connection\AMQPStreamConnection(
+                            $opt[0], // host
+                            $opt[1], // port
+                            $opt[2], // username
+                            $opt[3], // password
+                            '/',
+                            false,
+                            'AMQPLAIN',
+                            null,
+                            'en_US',
+                            10.0,
+                            10.0
+                        );
+                    } catch (\Exception $e) {}
+                }
+
+                // if the connection is null at this point all retry attempts have failed
+                if (is_null($connection)) {
+                    throw $e;
+                }
+
+                return $connection;
+            });
         }
 
         \Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandQueue', \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', ['useConfig' => true]));
