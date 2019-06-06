@@ -16,6 +16,11 @@ class Manager {
      */
     const CON_MODE_PERSISTENT = 1;
     const CON_MODE_TRANSIENT = 2;
+
+    /**
+     * Test prefix used for test mode connectionIdentifier creation.
+     */
+    const TEST_PREFIX = 'test';
     
     /**
      * Internal storage for available RabbitMQ connections. 
@@ -74,10 +79,14 @@ class Manager {
      * 
      * @param \Maleficarum\Command\AbstractCommand $command
      * @param string $connectionIdentifier
+     * @param bool $testMode
      * @throws \InvalidArgumentException
      * @return \Maleficarum\Rabbitmq\Manager\Manager
      */
-    public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier, bool $testMode = false) : \Maleficarum\Rabbitmq\Manager\Manager {
+        // set test connectionIdentifier
+        $testMode and $connectionIdentifier = self::TEST_PREFIX . $connectionIdentifier;
+
         // check if the specified connection identifier exists
         if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
         
@@ -104,10 +113,14 @@ class Manager {
      * 
      * @param array $commands
      * @param string $connectionIdentifier
+     * @param bool $testMode
      * @throws \InvalidArgumentException
      * @return Manager
      */
-    public function addCommands(array $commands, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
+    public function addCommands(array $commands, string $connectionIdentifier, bool $testMode = false) : \Maleficarum\Rabbitmq\Manager\Manager {
+        // set test connectionIdentifier
+        $testMode and $connectionIdentifier = self::TEST_PREFIX . $connectionIdentifier;
+
         // check if the specified connection identifier exists
         if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
 
