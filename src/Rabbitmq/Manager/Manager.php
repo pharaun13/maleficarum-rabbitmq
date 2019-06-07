@@ -84,7 +84,7 @@ class Manager {
      */
     public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
         // set test connectionIdentifier
-        $command->getTestMode() and $connectionIdentifier = self::TEST_PREFIX . $connectionIdentifier;
+        $connectionIdentifier = $this->getConnectionIdentifier($command, $connectionIdentifier);
 
         // check if the specified connection identifier exists
         if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
@@ -120,7 +120,7 @@ class Manager {
         if (count($commands) < 1) throw new \InvalidArgumentException(sprintf('Expected a nonempty array of commands. \%s()', __METHOD__));
 
         // set test connectionIdentifier
-        $commands[0]->getTestMode() and $connectionIdentifier = self::TEST_PREFIX . $connectionIdentifier;
+        $connectionIdentifier = $this->getConnectionIdentifier($commands[0], $connectionIdentifier);
 
         // check if the specified connection identifier exists
         if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
@@ -221,6 +221,19 @@ class Manager {
         $connection->connect();
         
         return $connection;
+    }
+
+    /**
+     * Get connectionIdentifier based on current testMode.
+     *
+     * @param \Maleficarum\Command\AbstractCommand $command
+     * @param string $connectionIdentifier
+     * @return string
+     */
+    private function getConnectionIdentifier(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier): string
+    {
+        $command->getTestMode() and $connectionIdentifier = self::TEST_PREFIX . $connectionIdentifier;
+        return $connectionIdentifier;
     }
 
     /* ------------------------------------ Class Methods END ------------------------------------------ */
