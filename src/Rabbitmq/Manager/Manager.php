@@ -230,8 +230,7 @@ class Manager {
      * @param string $connectionIdentifier
      * @return string
      */
-    private function getConnectionIdentifier(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier): string
-    {
+    private function getConnectionIdentifier(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier): string {
         $command->getTestMode() and $connectionIdentifier = self::TEST_PREFIX . $connectionIdentifier;
         return $connectionIdentifier;
     }
