@@ -16,6 +16,11 @@ class Manager {
      */
     const CON_MODE_PERSISTENT = 1;
     const CON_MODE_TRANSIENT = 2;
+
+    /**
+     * Test prefix used for test mode connectionIdentifier creation.
+     */
+    const TEST_PREFIX = 'test_';
     
     /**
      * Internal storage for available RabbitMQ connections. 
@@ -78,6 +83,9 @@ class Manager {
      * @return \Maleficarum\Rabbitmq\Manager\Manager
      */
     public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
+        // set test connectionIdentifier
+        $connectionIdentifier = $this->getConnectionIdentifier($command, $connectionIdentifier);
+
         // check if the specified connection identifier exists
         if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
         
@@ -108,17 +116,20 @@ class Manager {
      * @return Manager
      */
     public function addCommands(array $commands, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
+        // validate commands - set count
+        if (count($commands) < 1) throw new \InvalidArgumentException(sprintf('Expected a nonempty array of commands. \%s()', __METHOD__));
+
+        // set test connectionIdentifier
+        $connectionIdentifier = $this->getConnectionIdentifier($commands[0], $connectionIdentifier);
+
         // check if the specified connection identifier exists
         if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
 
         // recover the specified connection for internal storage
         $connection = $this->connections[$connectionIdentifier]['connection'];
-        
+
         // initialise the connection if necessary
         $connection->connect();
-
-        // validate commands - set count
-        if (count($commands) < 1) throw new \InvalidArgumentException(sprintf('Expected a nonempty array of commands. \%s()', __METHOD__));
 
         // validate commands - entity type
         foreach ($commands as $command) {
@@ -138,7 +149,7 @@ class Manager {
 
         // close the connection if it's in transient mode
         'transient' === $this->connections[$connectionIdentifier]['mode'] and $connection->disconnect();
-        
+
         return $this;
     }
 
@@ -168,10 +179,10 @@ class Manager {
 
         // close the connection if it's in transient mode
         'transient' === $this->connections[$connectionIdentifier]['mode'] and $connection->disconnect();
-        
+
         return $this;
     }
-    
+
     /**
      * Fetch a list of available source connections. This ensures that returned connections are active.
      * 
@@ -179,7 +190,7 @@ class Manager {
      */
     public function fetchSources() : array {
         $sources = [];
-        
+
         foreach ($this->sources as $connectionIdentifier) {
             array_key_exists($this->connections[$connectionIdentifier]['priority'], $sources) or $sources[$this->connections[$connectionIdentifier]['priority']] = [];
             $sources[$this->connections[$connectionIdentifier]['priority']][] = $this->connections[$connectionIdentifier]['connection']->connect();
@@ -189,11 +200,10 @@ class Manager {
         return $sources;
     }
 
-
     /**
      * Fetch a specific source connection. The connection will be activated if necessary.
      * 
-     * @param string $id
+     * @param string $connectionIdentifier
      * @throws \InvalidArgumentException
      * @return \Maleficarum\Rabbitmq\Connection\Connection
      */
@@ -212,6 +222,18 @@ class Manager {
         
         return $connection;
     }
-    
+
+    /**
+     * Get connectionIdentifier based on current testMode.
+     *
+     * @param \Maleficarum\Command\AbstractCommand $command
+     * @param string $connectionIdentifier
+     * @return string
+     */
+    private function getConnectionIdentifier(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier): string {
+        $command->getTestMode() and $connectionIdentifier = self::TEST_PREFIX . $connectionIdentifier;
+        return $connectionIdentifier;
+    }
+
     /* ------------------------------------ Class Methods END ------------------------------------------ */
 }
