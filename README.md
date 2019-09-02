@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [9.2.0] - 2019-09-02
+### Added
+- added support for testMode command parameter
+
 ## [9.1.0] - 2018-09-14
 ### Changed
 - When attempting to create a connection there will be a double retry from now on. (Exactly 3 attempts will be made to establish the connection).
