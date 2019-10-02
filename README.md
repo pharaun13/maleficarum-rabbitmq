@@ -1,7 +1,7 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
-## [9.3.0] - 2019-10-02
+## [10.0.0] - 2019-10-02
 ### Added
 - added exchange name for addCommand|addCommands methods
 

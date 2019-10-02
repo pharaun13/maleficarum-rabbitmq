@@ -99,10 +99,7 @@ class Manager {
         $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
         $channel = $connection->getChannel();
 
-
-
         if ($connection->getExchangeName() === '') {
-
             $channel->basic_publish($message, $connection->getExchangeName());
         } else {
             $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
