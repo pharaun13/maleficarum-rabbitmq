@@ -27,8 +27,7 @@ class Initializer {
                 if (!isset($opt['port']) || !is_int($opt['port'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - port not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['username']) || !mb_strlen($opt['username'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - username not specified. \Maleficarum\Ioc\Container::get()');
                 if (!isset($opt['password']) || !mb_strlen($opt['password'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - password not specified. \Maleficarum\Ioc\Container::get()');
-
-                if ((!isset($opt['queue-name']) || !mb_strlen($opt['queue-name'])) && (!isset($opt['exchange']) || !mb_strlen($opt['exchange'])) ){
+                if ((isset($opt['queue-name']) && mb_strlen($opt['queue-name'])) || (isset($opt['exchange']) && mb_strlen($opt['exchange']))){
                     throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - queue-name or exchange should be defined. \Maleficarum\Ioc\Container::get()');
                 }
 

@@ -98,13 +98,7 @@ class Manager {
         // send the command to the message broker
         $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
         $channel = $connection->getChannel();
-
-        if ($connection->getExchangeName() === '') {
-            $channel->basic_publish($message, $connection->getExchangeName());
-        } else {
-            $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
-        }
-
+        $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
         $channel->close();
         
         // close the connection if it's in transient mode
@@ -148,11 +142,7 @@ class Manager {
         $channel = $connection->getChannel();
         foreach ($commands as $command) {
             $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
-            if ($connection->getExchangeName() === '') {
-                $channel->batch_basic_publish($message, $connection->getExchangeName());
-            } else {
-                $channel->batch_basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
-            }
+            $channel->batch_basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
         }
         $channel->publish_batch();
         $channel->close();
@@ -184,12 +174,7 @@ class Manager {
         // send the message to the message broker
         $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$message, ['delivery_mode' => 2]]);
         $channel = $connection->getChannel();
-        if ($connection->getExchangeName() === '') {
-            $channel->basic_publish($message, $connection->getExchangeName());
-        } else {
-            $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
-        }
-
+        $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
         $channel->close();
 
         // close the connection if it's in transient mode
