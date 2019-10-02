@@ -58,21 +58,38 @@ class Connection {
      */
     private $vhost;
 
+    /**
+     * Exchange name
+     *
+     * @var string
+     */
+    private $exchangeName;
+
     /* ------------------------------------ Class Property END ----------------------------------------- */
 
     /* ------------------------------------ Magic methods START ---------------------------------------- */
     /**
      * Connection constructor.
      *
-     * @param string $queueName
      * @param string $host
      * @param int $port
      * @param string $username
      * @param string $password
      * @param string $vhost
+     * @param string $exchangeName
+     * @param string $queueName
      */
-    public function __construct(string $queueName, string $host, int $port, string $username, string $password, string $vhost = '/') {
+    public function __construct(
+        string $host,
+        int $port,
+        string $username,
+        string $password,
+        string $vhost = '/',
+        string $exchangeName = '',
+        string $queueName = null
+    ) {
         $this->setQueueName($queueName);
+        $this->setExchangeName($exchangeName);
         $this->host = $host;
         $this->port = $port;
         $this->username = $username;
@@ -169,8 +186,30 @@ class Connection {
      * @param string $queueName
      * @return \Maleficarum\Rabbitmq\Connection\Connection
      */
-    public function setQueueName(string $queueName) : \Maleficarum\Rabbitmq\Connection\Connection {
+    public function setQueueName(string $queueName = null) : \Maleficarum\Rabbitmq\Connection\Connection {
         $this->queueName = $queueName;
+
+        return $this;
+    }
+
+    /**
+     * Fetch the current exchange name used by this connection.
+     *
+     * @return string
+     */
+    public function getExchangeName() :? string {
+        return $this->exchangeName;
+    }
+
+    /**
+     * Set the current exchange by this connection.
+     *
+     * @param string $exchangeName
+     * @return \Maleficarum\Rabbitmq\Connection\Connection
+     */
+    public function setExchangeName(string $exchangeName) : \Maleficarum\Rabbitmq\Connection\Connection {
+        $this->exchangeName = $exchangeName;
+
         return $this;
     }
     
