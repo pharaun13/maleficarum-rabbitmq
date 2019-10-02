@@ -79,10 +79,13 @@ class Manager {
      * 
      * @param \Maleficarum\Command\AbstractCommand $command
      * @param string $connectionIdentifier
+     * @param string $exchangeName
+     *
      * @throws \InvalidArgumentException
+     *
      * @return \Maleficarum\Rabbitmq\Manager\Manager
      */
-    public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier, string $exchangeName = '') : \Maleficarum\Rabbitmq\Manager\Manager {
         // set test connectionIdentifier
         $connectionIdentifier = $this->getConnectionIdentifier($command, $connectionIdentifier);
 
@@ -98,7 +101,7 @@ class Manager {
         // send the command to the message broker
         $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
         $channel = $connection->getChannel();
-        $channel->basic_publish($message, '', $connection->getQueueName());
+        $channel->basic_publish($message, $exchangeName, $connection->getQueueName());
         $channel->close();
         
         // close the connection if it's in transient mode
@@ -115,7 +118,7 @@ class Manager {
      * @throws \InvalidArgumentException
      * @return Manager
      */
-    public function addCommands(array $commands, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
+    public function addCommands(array $commands, string $connectionIdentifier, string $exchangeName = '') : \Maleficarum\Rabbitmq\Manager\Manager {
         // validate commands - set count
         if (count($commands) < 1) throw new \InvalidArgumentException(sprintf('Expected a nonempty array of commands. \%s()', __METHOD__));
 
@@ -142,7 +145,7 @@ class Manager {
         $channel = $connection->getChannel();
         foreach ($commands as $command) {
             $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
-            $channel->batch_basic_publish($message, '', $connection->getQueueName());
+            $channel->batch_basic_publish($message, $exchangeName, $connection->getQueueName());
         }
         $channel->publish_batch();
         $channel->close();
