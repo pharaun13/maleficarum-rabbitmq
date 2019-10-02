@@ -31,10 +31,6 @@ class Initializer {
                     throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - queue-name or exchange should be defined. \Maleficarum\Ioc\Container::get()');
                 }
 
-                if ((isset($opt['queue-name']) && mb_strlen($opt['queue-name'])) && (!isset($opt['exchange']) || !mb_strlen($opt['exchange'])) ){
-                    throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - queue-name or exchange should be defined. \Maleficarum\Ioc\Container::get()');
-                }
-
                 // optional params
                 $vhost = (isset($opt['vhost']) && mb_strlen($opt['vhost'])) ? $opt['vhost'] : '/';
                 $exchange = (isset($opt['exchange']) && mb_strlen($opt['exchange'])) ? $opt['exchange'] : '';
