@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [9.3.0] - 2019-10-03
+### Added
+- added exchange name for addCommand|addCommands|addRawMessage methods
+
 ## [9.2.0] - 2019-09-02
 ### Added
 - added support for testMode command parameter
