@@ -4,7 +4,7 @@
     "description": "Rabbitmq component",
     "require": {
         "php": "^7.2",
-        "php-amqplib/php-amqplib": "2.6.3",
+        "php-amqplib/php-amqplib": "2.11",
         "maleficarum/ioc": "^3.0",
         "maleficarum/command": "^3.0"
     },
