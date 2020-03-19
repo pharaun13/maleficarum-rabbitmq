@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [10.1.0] - 2020-03-19
+### Added
+- Added an option to gracefully remove a connection object from the connection manager.
+
 ## [10.0.0] - 2020-02-18
 ### Added
 - bump php-amqplib version to 2.11

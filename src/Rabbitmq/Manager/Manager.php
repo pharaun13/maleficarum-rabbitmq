@@ -75,6 +75,25 @@ class Manager {
     }
 
     /**
+     * Remove a connection object from the connection manager
+     *
+     * @param string $connectionIdentifier
+     * @throws \InvalidArgumentException
+     * @return \Maleficarum\Rabbitmq\Manager\Manager
+     * @return Manager
+     */
+    public function removeConnection(string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager{
+        // check if the specified connection identifier exists
+        if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
+
+        $connection = $this->connections[$connectionIdentifier]['connection'];
+        $connection->disconnect();
+        unset($this->connections[$connectionIdentifier]);
+
+        return $this;
+    }
+
+    /**
      * Add a new command to a specified connection.
      * 
      * @param \Maleficarum\Command\AbstractCommand $command
@@ -100,9 +119,9 @@ class Manager {
         $channel = $connection->getChannel();
         $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
         $channel->close();
-        
+
         // close the connection if it's in transient mode
-        'transient' === $this->connections[$connectionIdentifier]['mode'] and $connection->disconnect(); 
+        'transient' === $this->connections[$connectionIdentifier]['mode'] and $connection->disconnect();
         
         return $this;
     }
