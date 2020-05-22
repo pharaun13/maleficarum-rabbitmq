@@ -98,10 +98,12 @@ class Manager {
      * 
      * @param \Maleficarum\Command\AbstractCommand $command
      * @param string $connectionIdentifier
-     * @throws \InvalidArgumentException
+     * @param array $commandHeaders
      * @return \Maleficarum\Rabbitmq\Manager\Manager
+     *
+     *@throws \InvalidArgumentException
      */
-    public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier, array $commandHeaders = []) : \Maleficarum\Rabbitmq\Manager\Manager {
         // set test connectionIdentifier
         $connectionIdentifier = $this->getConnectionIdentifier($command, $connectionIdentifier);
 
@@ -114,8 +116,12 @@ class Manager {
         // initialise the connection if necessary
         $connection->connect();
 
+        $applicationHeaders = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Wire\AMQPTable', [$commandHeaders]);
+
         // send the command to the message broker
-        $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
+        $message = \Maleficarum\Ioc\Container::get(
+            'PhpAmqpLib\Message\AMQPMessage',
+            [$command->toJSON(), ['delivery_mode' => 2, 'application_headers' => $applicationHeaders]]);
         $channel = $connection->getChannel();
         $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
         $channel->close();
@@ -131,10 +137,12 @@ class Manager {
      * 
      * @param array $commands
      * @param string $connectionIdentifier
-     * @throws \InvalidArgumentException
+     * @param array $commandsHeaders
      * @return Manager
+     *
+     *@throws \InvalidArgumentException
      */
-    public function addCommands(array $commands, string $connectionIdentifier) : \Maleficarum\Rabbitmq\Manager\Manager {
+    public function addCommands(array $commands, string $connectionIdentifier, array $commandsHeaders = []) : \Maleficarum\Rabbitmq\Manager\Manager {
         // validate commands - set count
         if (count($commands) < 1) throw new \InvalidArgumentException(sprintf('Expected a nonempty array of commands. \%s()', __METHOD__));
 
@@ -159,8 +167,9 @@ class Manager {
 
         // send commands
         $channel = $connection->getChannel();
+        $applicationHeaders = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Wire\AMQPTable', [$commandsHeaders]);
         foreach ($commands as $command) {
-            $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2]]);
+            $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2, 'application_headers' => $applicationHeaders]]);
             $channel->batch_basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
         }
         $channel->publish_batch();
