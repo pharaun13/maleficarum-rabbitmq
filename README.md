@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [10.2.0] - 2020-05-22
+### Added
+- Added support for sending amqp messages with headers
+
 ## [10.1.0] - 2020-03-19
 ### Added
 - Added an option to gracefully remove a connection object from the connection manager.
