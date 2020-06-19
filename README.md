@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [10.3.0] - 2020-06-19
+### Added
+- Added support for publish confirm mode
+
 ## [10.2.0] - 2020-05-22
 ### Added
 - Added support for sending amqp messages with headers
