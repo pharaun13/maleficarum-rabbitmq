@@ -45,7 +45,7 @@ class Manager {
      * @param string $identifier
      * @param int $mode
      * @param int $priority
-     * @param int $publishConfirmTimeout
+     * @param int $publishConfirmTimeout Timeout value in seconds
      * @throws \InvalidArgumentException
      * @return \Maleficarum\Rabbitmq\Manager\Manager
      */
