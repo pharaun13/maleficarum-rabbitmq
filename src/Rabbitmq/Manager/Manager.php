@@ -138,7 +138,7 @@ class Manager {
         $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
 
         // wait for publish confirm
-        $channel->wait_for_pending_acks($publishConfirmTimeout);
+        $publishConfirmTimeout > 0 and $channel->wait_for_pending_acks($publishConfirmTimeout);
 
         $channel->close();
 
@@ -198,7 +198,7 @@ class Manager {
         $channel->publish_batch();
 
         // wait for publish confirm
-        $channel->wait_for_pending_acks($publishConfirmTimeout);
+        $publishConfirmTimeout > 0 and $channel->wait_for_pending_acks($publishConfirmTimeout);
 
         $channel->close();
 
