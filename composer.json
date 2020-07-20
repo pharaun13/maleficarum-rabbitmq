@@ -6,7 +6,7 @@
         "php": "^7.2",
         "php-amqplib/php-amqplib": "2.11",
         "maleficarum/ioc": "^3.0",
-        "maleficarum/command": "^4.0"
+        "maleficarum/command": "^3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0"
