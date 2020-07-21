@@ -38,12 +38,12 @@ class Initializer {
 
                 return new \Maleficarum\Rabbitmq\Connection\Connection($opt['host'], (int)$opt['port'], $opt['username'], $opt['password'], $vhost, $exchange, $queue);
             });
-            
+
             \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Rabbitmq\Manager\Manager', function ($dep, $opt) {
                 $manager = new \Maleficarum\Rabbitmq\Manager\Manager();
                 if (array_key_exists('Maleficarum\Config', $dep) && isset($dep['Maleficarum\Config']['rabbitmq'])) {
                     $config = $dep['Maleficarum\Config']['rabbitmq'];
-                    
+
                     // add persistent connections
                     if (isset($config['persistent']) && is_array($config['persistent'])) {
                         foreach($config['persistent'] as $con_name) {
@@ -58,15 +58,19 @@ class Initializer {
                             // vhost is optional
                             isset($config['broker_'.$con_name]['vhost']) && mb_strlen($config['broker_'.$con_name]['vhost']) and $params['vhost'] = $config['broker_'.$con_name]['vhost'];
 
+                            // optional publish confirm timeout
+                            $pc_timeout = (int)($config['broker_'.$con_name]['publish-confirm-timeout'] ?? 0);
+
                             $manager->addConnection(
-                                \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', $params), 
+                                \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', $params),
                                 $con_name,
                                 \Maleficarum\Rabbitmq\Manager\Manager::CON_MODE_PERSISTENT,
-                                (int)$config['broker_'.$con_name]['priority']
+                                (int)$config['broker_'.$con_name]['priority'],
+                                $pc_timeout
                             );
                         }
                     }
-                    
+
                     // add transient connections
                     if (isset($config['transient']) && is_array($config['transient'])) {
                         foreach($config['transient'] as $con_name) {
@@ -82,11 +86,15 @@ class Initializer {
                             isset($config['broker_'.$con_name]['queue']) && mb_strlen($config['broker_'.$con_name]['queue']) and $params['queue-name'] = $config['broker_'.$con_name]['queue'];
                             isset($config['broker_'.$con_name]['exchange']) && mb_strlen($config['broker_'.$con_name]['exchange']) and $params['exchange'] = $config['broker_'.$con_name]['exchange'];
 
+                            // optional publish confirm timeout
+                            $pc_timeout = (int)($config['broker_'.$con_name]['publish-confirm-timeout'] ?? 0);
+
                             $manager->addConnection(
                                 \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection\Connection', $params),
                                 $con_name,
                                 \Maleficarum\Rabbitmq\Manager\Manager::CON_MODE_TRANSIENT,
-                                (int)$config['broker_'.$con_name]['priority']
+                                (int)$config['broker_'.$con_name]['priority'],
+                                $pc_timeout
                             );
                         }
                     }
@@ -129,7 +137,7 @@ class Initializer {
 
         // add the rabbimq manager as a command route dependency
         \Maleficarum\Ioc\Container::registerShare('Maleficarum\CommandRouter', \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Manager\Manager'));
-        
+
         // return initializer name
         return __METHOD__;
     }
