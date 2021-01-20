@@ -1,6 +1,14 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [12.0.0] - 2021-01-20
+### Changed
+- Bump command component to version 5.0
+
+## [11.0.0] - 2020-06-05
+### Changed
+- Bump command component to version 4.0
+
 ## [10.2.0] - 2020-05-22
 ### Added
 - Added support for sending amqp messages with headers
