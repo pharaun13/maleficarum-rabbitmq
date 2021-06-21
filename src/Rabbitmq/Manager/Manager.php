@@ -6,6 +6,9 @@ declare (strict_types=1);
 
 namespace Maleficarum\Rabbitmq\Manager;
 
+use Maleficarum\ContextTracing\Carrier\Amqp\AmqpHeader;
+use Maleficarum\ContextTracing\ContextTracker;
+
 class Manager {
     /* ------------------------------------ Class Property START --------------------------------------- */
 
@@ -116,6 +119,7 @@ class Manager {
         // initialise the connection if necessary
         $connection->connect();
 
+        $commandHeaders = (new AmqpHeader())->inject(ContextTracker::getTracer(), $commandHeaders);
         $applicationHeaders = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Wire\AMQPTable', [$commandHeaders]);
 
         // send the command to the message broker
@@ -167,6 +171,7 @@ class Manager {
 
         // send commands
         $channel = $connection->getChannel();
+        $commandsHeaders = (new AmqpHeader())->inject(ContextTracker::getTracer(), $commandsHeaders);
         $applicationHeaders = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Wire\AMQPTable', [$commandsHeaders]);
         foreach ($commands as $command) {
             $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$command->toJSON(), ['delivery_mode' => 2, 'application_headers' => $applicationHeaders]]);
