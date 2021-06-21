@@ -204,8 +204,11 @@ class Manager {
         // initialise the connection if necessary
         $connection->connect();
 
+        $commandsHeaders = (new AmqpHeader())->inject(ContextTracker::getTracer(), []);
+        $applicationHeaders = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Wire\AMQPTable', [$commandsHeaders]);
+
         // send the message to the message broker
-        $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$message, ['delivery_mode' => 2]]);
+        $message = \Maleficarum\Ioc\Container::get('PhpAmqpLib\Message\AMQPMessage', [$message, ['delivery_mode' => 2, 'application_headers' => $applicationHeaders]]);
         $channel = $connection->getChannel();
         $channel->basic_publish($message, $connection->getExchangeName(), $connection->getQueueName());
         $channel->close();
