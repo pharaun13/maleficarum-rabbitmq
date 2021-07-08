@@ -7,7 +7,7 @@
         "php-amqplib/php-amqplib": "2.11",
         "maleficarum/ioc": "^3.0",
         "maleficarum/command": "^5.0",
-        "maleficarum/contexttracker": "1.0"
+        "maleficarum/contexttracker": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0"
