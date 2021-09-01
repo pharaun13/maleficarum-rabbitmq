@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [12.1.1] - 2021-09-01
+### Added
+- Automatic injection of context tracking headers
+- Dependency to context tracking library 
+
 ## [12.0.0] - 2021-01-20
 ### Changed
 - Bump command component to version 5.0
