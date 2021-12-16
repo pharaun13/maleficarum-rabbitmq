@@ -24,9 +24,9 @@ trait Dependant {
      * Inject a new rabbitmq manager object.
      *
      * @param \Maleficarum\Rabbitmq\Manager\Manager $connection
-     * @return \Maleficarum\Rabbitmq\Dependant
+     * @return $this
      */
-    public function setQueue(\Maleficarum\Rabbitmq\Manager\Manager $manager) {
+    public function setQueue(\Maleficarum\Rabbitmq\Manager\Manager $manager) : self {
         $this->rabbitmqStorage = $manager;
 
         return $this;
@@ -44,9 +44,9 @@ trait Dependant {
     /**
      * Detach the currently assigned rabbitmq manager object.
      *
-     * @return \Maleficarum\Rabbitmq\Dependant
+     * @return $this
      */
-    public function detachQueue() {
+    public function detachQueue() : self {
         $this->rabbitmqStorage = null;
 
         return $this;
