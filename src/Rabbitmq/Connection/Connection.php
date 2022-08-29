@@ -122,6 +122,15 @@ class Connection {
     }
 
     /**
+     * Get connection string to replyTo
+     * @return string
+     */
+    public function getConnectionString(): string
+    {
+        return \sprintf("amqp://%s:%s@%s:%s%s", $this->username, $this->password, $this->host, $this->port, $this->vhost);
+    }
+
+    /**
      * Close connection and channel.
      *
      * @return \Maleficarum\Rabbitmq\Connection\Connection
