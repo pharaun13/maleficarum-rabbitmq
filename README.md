@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum RabbitMQ component implementation. 
 
+## [12.1.0] - 2022-08-29
+### Changed
+- Add method to get connection string from connection params
+
 ## [12.0.0] - 2021-01-20
 ### Changed
 - Bump command component to version 5.0
