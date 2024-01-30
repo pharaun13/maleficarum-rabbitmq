@@ -6,7 +6,10 @@ declare (strict_types=1);
 
 namespace Maleficarum\Rabbitmq\Manager;
 
+use Command\AbstractReply;
 use Maleficarum\Rabbitmq\RidProvider;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
+use Service\RabbitMq\Exception\QueueAwaitTimeoutException;
 
 class Manager {
     /* ------------------------------------ Class Property START --------------------------------------- */
@@ -264,6 +267,49 @@ class Manager {
         $connection->connect();
         
         return $connection;
+    }
+
+    public function awaitCommand(callable $callback, string $connectionIdentifier, int $timeout = 300)
+    {
+        // check if the specified connection identifier exists
+        if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
+
+        // recover the specified connection for internal storage
+        $connection = $this->connections[$connectionIdentifier]['connection'];
+
+        // initialise the connection if necessary
+        $connection->connect();
+
+        $channel = $connection->getChannel();
+
+        $consumerTag = $channel->basic_consume($connection->getQueueName(), '', false, false, false, false, function ($message) use ($callback) {
+            $channel = $message->delivery_info['channel'];
+
+            try {
+                $command = \Maleficarum\Rabbitmq\Manager\AbstractReply::decode($message->body);
+            } catch (\InvalidArgumentException $exception) {
+                $channel->basic_nack($message->delivery_info['delivery_tag']);
+                $channel->basic_cancel($message->delivery_info['consumer_tag']);
+
+                throw $exception;
+            }
+
+            $callback($command);
+
+            $channel->basic_ack($message->delivery_info['delivery_tag']);
+            $channel->basic_cancel($message->delivery_info['consumer_tag']);
+        });
+
+        while (isset($channel->callbacks[$consumerTag])) {
+            try {
+                $channel->wait(null, true, $timeout);
+            } catch (AMQPTimeoutException $exception) {
+                $connection->disconnect();
+                throw new \Maleficarum\Rabbitmq\Manager\QueueAwaitTimeoutException($connection->getQueueName());
+            }
+        }
+
+        $connection->disconnect();
     }
 
     /**
