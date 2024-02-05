@@ -6,6 +6,11 @@ declare (strict_types=1);
 
 namespace Maleficarum\Rabbitmq\Manager;
 
+use Command\AbstractReply;
+use Maleficarum\Rabbitmq\RidProvider;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
+use Service\RabbitMq\Exception\QueueAwaitTimeoutException;
+
 class Manager {
     /* ------------------------------------ Class Property START --------------------------------------- */
 
@@ -21,7 +26,10 @@ class Manager {
      * Test prefix used for test mode connectionIdentifier creation.
      */
     const TEST_PREFIX = 'test_';
-    
+    const VERSION0 = 'v0';
+    const VERSION1 = 'v1';
+    const VERSION2 = 'v2';
+
     /**
      * Internal storage for available RabbitMQ connections. 
      * @var array 
@@ -33,10 +41,20 @@ class Manager {
      * @var array 
      */
     private $sources = [];
+
+    /**
+     * @var RidProvider
+     */
+    private $ridProvider;
     
     /* ------------------------------------ Class Property END ----------------------------------------- */
     
     /* ------------------------------------ Class Methods START ---------------------------------------- */
+    public function __construct(RidProvider $ridProvider)
+    {
+        $this->ridProvider = $ridProvider;
+    }
+
 
     /**
      * Add a new connection to the connection pool.
@@ -103,7 +121,7 @@ class Manager {
      *
      *@throws \InvalidArgumentException
      */
-    public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier, array $commandHeaders = []) : \Maleficarum\Rabbitmq\Manager\Manager {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier, array $commandHeaders = [], string $protocolVersion) : \Maleficarum\Rabbitmq\Manager\Manager {
         // set test connectionIdentifier
         $connectionIdentifier = $this->getConnectionIdentifier($command, $connectionIdentifier);
 
@@ -251,6 +269,49 @@ class Manager {
         return $connection;
     }
 
+    public function awaitCommand(callable $callback, string $connectionIdentifier, int $timeout = 300)
+    {
+        // check if the specified connection identifier exists
+        if (!array_key_exists($connectionIdentifier, $this->connections)) throw new \InvalidArgumentException(sprintf('Provided connection identifier does not exist. %s', __METHOD__));
+
+        // recover the specified connection for internal storage
+        $connection = $this->connections[$connectionIdentifier]['connection'];
+
+        // initialise the connection if necessary
+        $connection->connect();
+
+        $channel = $connection->getChannel();
+
+        $consumerTag = $channel->basic_consume($connection->getQueueName(), '', false, false, false, false, function ($message) use ($callback) {
+            $channel = $message->delivery_info['channel'];
+
+            try {
+                $command = \Maleficarum\Rabbitmq\Manager\AbstractReply::decode($message->body);
+            } catch (\InvalidArgumentException $exception) {
+                $channel->basic_nack($message->delivery_info['delivery_tag']);
+                $channel->basic_cancel($message->delivery_info['consumer_tag']);
+
+                throw $exception;
+            }
+
+            $callback($command);
+
+            $channel->basic_ack($message->delivery_info['delivery_tag']);
+            $channel->basic_cancel($message->delivery_info['consumer_tag']);
+        });
+
+        while (isset($channel->callbacks[$consumerTag])) {
+            try {
+                $channel->wait(null, true, $timeout);
+            } catch (AMQPTimeoutException $exception) {
+                $connection->disconnect();
+                throw new \Maleficarum\Rabbitmq\Manager\QueueAwaitTimeoutException($connection->getQueueName());
+            }
+        }
+
+        $connection->disconnect();
+    }
+
     /**
      * Get connectionIdentifier based on current testMode.
      *
@@ -261,6 +322,18 @@ class Manager {
     private function getConnectionIdentifier(\Maleficarum\Command\AbstractCommand $command, string $connectionIdentifier): string {
         $command->getTestMode() and $connectionIdentifier = self::TEST_PREFIX . $connectionIdentifier;
         return $connectionIdentifier;
+    }
+
+    private function enforceHid(\Maleficarum\Command\AbstractCommand $command, PhpAmqpLib\Wire\AMQPTable $applicationHeaders, string $protocolVersion) {
+        if ($protocolVersion == self::VERSION0) {
+            $command->setParentHandlerId($this->ridProvider->getRid());
+        }
+        if ($protocolVersion == self::VERSION1 ) {
+            $command->setCommandMetaData(array_merge($command->getCommandMetaData(), ['handlerId' => $this->ridProvider->getRid()]));
+        }
+        if ($protocolVersion == '' . self::VERSION2) {
+            $applicationHeaders->set('handlerId', $this->ridProvider->getRid());
+        }
     }
 
     /* ------------------------------------ Class Methods END ------------------------------------------ */
