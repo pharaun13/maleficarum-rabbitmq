@@ -6,6 +6,8 @@ declare (strict_types=1);
 
 namespace Maleficarum\Rabbitmq\Initializer;
 
+use Maleficarum\Logger\RidProvider;
+
 class Initializer {
     /* ------------------------------------ Class Methods START ---------------------------------------- */
 
@@ -19,8 +21,16 @@ class Initializer {
     static public function initialize(array $opts = []) : string {
         // load default builder if skip not requested
         $builders = $opts['builders'] ?? [];
+
+
         is_array($builders) or $builders = [];
         if (!isset($builders['queue']['skip'])) {
+
+            if (!isset($opts['logger.rid_provider']) || !($opts['logger.rid_provider'] instanceof \Maleficarum\Rabbitmq\RidProvider)) {
+                throw new \Exception('Missing loggers rid provider or wrong type');
+            }
+            $ridProvider = $opts['logger.rid_provider'];
+
             \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Rabbitmq\Connection\Connection', function ($dep, $opt) {
                 // required params
                 if (!isset($opt['host']) || !mb_strlen($opt['host'])) throw new \RuntimeException('Impossible to create a \Maleficarum\Rabbitmq\Connection\Connection object - host not specified. \Maleficarum\Ioc\Container::get()');
@@ -39,8 +49,8 @@ class Initializer {
                 return new \Maleficarum\Rabbitmq\Connection\Connection($opt['host'], (int)$opt['port'], $opt['username'], $opt['password'], $vhost, $exchange, $queue);
             });
             
-            \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Rabbitmq\Manager\Manager', function ($dep, $opt) {
-                $manager = new \Maleficarum\Rabbitmq\Manager\Manager();
+            \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Rabbitmq\Manager\Manager', function ($dep, $opt) use ($ridProvider) {
+                $manager = new \Maleficarum\Rabbitmq\Manager\Manager($ridProvider);
                 if (array_key_exists('Maleficarum\Config', $dep) && isset($dep['Maleficarum\Config']['rabbitmq'])) {
                     $config = $dep['Maleficarum\Config']['rabbitmq'];
                     
